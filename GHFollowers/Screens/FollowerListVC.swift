@@ -15,6 +15,8 @@ class FollowerListVC: UIViewController {
     
     var username: String!
     var followers: [Follower] = []
+    var page = 1
+    var hasMoreFollowers = true
     
     
     var collectionView: UICollectionView!
@@ -24,7 +26,7 @@ class FollowerListVC: UIViewController {
         super.viewDidLoad()
         configureViewController()
         configureCollectionView()
-        getFollowers()
+        getFollowers(username: username, page: page)
         configureDataSource()
         
     }
@@ -48,19 +50,20 @@ class FollowerListVC: UIViewController {
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseID)
     }
     
-    func getFollowers() {
+    func getFollowers(username: String, page: Int) {
         
-        NetworkManager.shared.getFollowers(for: username, page: 1) { [weak self] result in
+        NetworkManager.shared.getFollowers(for: username, page: page) { [weak self] result in
             
             guard let self = self else { return }
             
             switch result {
             case .success(let followers):
-                self.followers = followers
+                if followers.count < 100 { self.hasMoreFollowers = false }
+                self.followers.append(contentsOf: followers)
                 self.updateData()
                 
             case .failure(let error):
-                self.presentGFAlertOnMainThread(title: "Bad stuff hafesfppened", message: error.rawValue , buttonTitle: "OK")
+                self.presentGFAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue , buttonTitle: "OK")
             }
         }
     }
@@ -85,8 +88,6 @@ class FollowerListVC: UIViewController {
     }
 }
 
-
-    
     extension FollowerListVC : UICollectionViewDelegate {
         
         func scrollViewDidEndDragging(_ scrollView : UIScrollView, willDecelerate decelerate: Bool) {
@@ -94,12 +95,14 @@ class FollowerListVC: UIViewController {
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.height
             
-        print("OffsetY = \(offsetY)")
-        print("ContentHeight = \(contentHeight)")
-        print("Height = \(height)")
-            
-        
+       if offsetY > contentHeight - height {
+           guard hasMoreFollowers else { return }
+           page += 1
+           getFollowers(username: username, page: page)
+            }
+         
     }
 }
+
 
 
