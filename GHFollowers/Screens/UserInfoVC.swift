@@ -41,6 +41,8 @@ class UserInfoVC: UIViewController {
             case .success(let user):
                DispatchQueue.main.async {
                    self.add(childVC: GFUserInfoHeaderVC(user: user), to: self.headerView)
+                   self.add(childVC: GFRepoItemVC(user: user), to: self.itemViewOne)
+                   self.add(childVC: GFFollowerItemVC(user: user), to: self.itemViewTwo)
                 }
                 
             case .failure(let error):
@@ -68,8 +70,6 @@ class UserInfoVC: UIViewController {
             ])
         }
         
-        itemViewOne.backgroundColor = .systemPink
-        itemViewTwo.backgroundColor = .systemBlue
       
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -86,9 +86,17 @@ class UserInfoVC: UIViewController {
     func add(childVC: UIViewController, to containerView: UIView) {
         addChild(childVC)
         containerView.addSubview(childVC.view)
-        childVC.view.frame = containerView.bounds
+
+        childVC.view.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            childVC.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            childVC.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            childVC.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            childVC.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+        ])
+
         childVC.didMove(toParent: self)
-        
     }
     
     @objc func dismissVC () {
