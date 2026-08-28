@@ -72,7 +72,7 @@ class GFUserInfoHeaderVC: UIViewController {
             
             usernameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
             usernameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: textImagePadding),
-            usernameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            usernameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             usernameLabel.heightAnchor.constraint(equalToConstant: 38),
             
             nameLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor, constant: 8),
